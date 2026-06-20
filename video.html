@@ -506,29 +506,26 @@
         let videosData = [];
         let currentVideo = null;
 
+        const FIREBASE_URL = 'https://habbo-login-default-rtdb.firebaseio.com';
+
         // Fetch query id from url
         const urlParams = new URLSearchParams(window.location.search);
-        const videoId = urlParams.get('id');
+        const videoId = decodeURIComponent(urlParams.get('id') || '');
 
-        // Load videos from localStorage
-        function loadVideos() {
-            const stored = localStorage.getItem('thawab_videos');
-            if (stored) {
-                try {
-                    videosData = JSON.parse(stored);
-                } catch(e) {
-                    videosData = [];
+        // Load videos from Firebase
+        async function loadVideos() {
+            try {
+                const res = await fetch(`${FIREBASE_URL}/videos.json`);
+                const data = await res.json();
+                if (data) {
+                    videosData = Object.entries(data).map(([key, val]) => ({ ...val, firebaseKey: key }));
                 }
-            }
-            
-            // Find current video
+            } catch(e) {}
+
             currentVideo = videosData.find(v => v.id === videoId);
             if (!currentVideo) {
-                // If not found, fallback alert and redirect
                 showToast('عذراً، المقطع غير موجود! ⚠️');
-                setTimeout(() => {
-                    window.location.href = 'home.html';
-                }, 1500);
+                setTimeout(() => { window.location.href = 'home.html'; }, 1500);
             }
         }
 
@@ -696,8 +693,8 @@
         }
 
         // Initial setup and render check
-        window.addEventListener('DOMContentLoaded', () => {
-            loadVideos();
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadVideos();
             renderCurrentVideo();
             renderSimilarVideos();
         });

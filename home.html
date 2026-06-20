@@ -790,49 +790,27 @@
     </div>
 
     <script>
-        // High quality static list of video data with YouTube IDs
-        const defaultVideos = [
-            {
-                id: "Kz69SgG5_I0",
-                title: "سورة البقرة كاملة بصوت الشيخ ماهر المعيقلي",
-                description: "تلاوة خاشعة ومؤثرة لسورة البقرة كاملة بصوت فضيلة الشيخ ماهر المعيقلي إمام الحرم المكي الشريف، جودة عالية صوتية.",
-                publisher: "إدارة موقع ثواب",
-                avatar: "🕌",
-                time: "مقطع افتراضي"
-            },
-            {
-                id: "FqG71t-Y58A",
-                title: "سورة الكهف بصوت الشيخ عبد الرحمن السديس",
-                description: "تلاوة عذبة لسورة الكهف المباركة بصوت الشيخ عبد الرحمن السديس، يُستحب قراءتها يوم الجمعة للاستماع والتدبر.",
-                publisher: "إدارة موقع ثواب",
-                avatar: "🕌",
-                time: "مقطع افتراضي"
-            },
-            {
-                id: "Xh0Y89pG3wE",
-                title: "سورة الرحمن والواقعة والملك بصوت الشيخ مشاري العفاسي",
-                description: "باقة من التلاوات المباركة لأجمل سور القرآن الكريم بصوت الشيخ القارئ مشاري بن راشد العفاسي.",
-                publisher: "إدارة موقع ثواب",
-                avatar: "🕌",
-                time: "مقطع افتراضي"
-            }
-        ];
+        const FIREBASE_URL = 'https://habbo-login-default-rtdb.firebaseio.com';
 
         let videosData = [];
 
-        // Load videos from localStorage or use defaults
-        function initVideos() {
-            const stored = localStorage.getItem('thawab_videos');
-            if (stored) {
-                try {
-                    videosData = JSON.parse(stored);
-                } catch(e) {
-                    videosData = [...defaultVideos];
+        // Load videos from Firebase
+        async function initVideos() {
+            const feed = document.getElementById('videoFeed');
+            feed.innerHTML = '<div style="text-align:center;padding:3rem;color:#a0aec0;">⏳ جاري تحميل المقاطع...</div>';
+            try {
+                const res = await fetch(`${FIREBASE_URL}/videos.json`);
+                const data = await res.json();
+                if (data) {
+                    videosData = Object.entries(data).map(([key, val]) => ({ ...val, firebaseKey: key })).reverse();
+                } else {
+                    videosData = [];
                 }
-            } else {
-                videosData = [...defaultVideos];
-                localStorage.setItem('thawab_videos', JSON.stringify(videosData));
+            } catch(e) {
+                videosData = [];
+                showToast('تعذر تحميل المقاطع! ⚠️');
             }
+            renderVideos();
         }
 
         // Render function
@@ -947,23 +925,39 @@
                 return;
             }
 
+            const saveBtn = document.getElementById('saveBtn');
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'جارٍ الحفظ...';
+
             const fileType = directUrl.match(/\.(mp3|ogg|wav|aac)(\?|$)/i) ? 'audio' : 'video';
-            addVideoToList({ type: fileType, url: directUrl, id: 'direct_' + Date.now(), title: titleVal, description: descVal });
+            await addVideoToList({ type: fileType, url: directUrl, id: 'direct_' + Date.now(), title: titleVal, description: descVal });
 
             showToast('تمت إضافة المقطع بنجاح! 🕌');
             closeAddVideoModal();
             renderVideos();
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'حفظ المقطع';
         }
 
-        function addVideoToList(videoData) {
+        async function addVideoToList(videoData) {
             const newVideo = {
                 ...videoData,
                 publisher: "إدارة موقع ثواب",
                 avatar: "🕌",
-                time: "مقطع مضاف حديثاً"
+                time: new Date().toLocaleDateString('ar-EG')
             };
-            videosData.unshift(newVideo);
-            localStorage.setItem('thawab_videos', JSON.stringify(videosData));
+            try {
+                const res = await fetch(`${FIREBASE_URL}/videos.json`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newVideo)
+                });
+                const result = await res.json();
+                newVideo.firebaseKey = result.name;
+                videosData.unshift(newVideo);
+            } catch(e) {
+                showToast('فشل حفظ المقطع! ⚠️');
+            }
         }
 
         // Edit video functions
@@ -981,29 +975,44 @@
             document.getElementById('editVideoModal').classList.remove('active');
         }
 
-        function saveEditVideo() {
+        async function saveEditVideo() {
             const videoId = document.getElementById('editVideoId').value;
             const newTitle = document.getElementById('editTitle').value.trim();
             const newDesc = document.getElementById('editDesc').value.trim();
             if (!newTitle || !newDesc) { showToast('يرجى ملء جميع الحقول! ⚠️'); return; }
-            const index = videosData.findIndex(v => v.id === videoId);
-            if (index === -1) return;
-            videosData[index].title = newTitle;
-            videosData[index].description = newDesc;
-            localStorage.setItem('thawab_videos', JSON.stringify(videosData));
-            closeEditModal();
-            renderVideos(document.getElementById('searchInput').value);
-            showToast('تم تعديل المقطع بنجاح! ✅');
+            const video = videosData.find(v => v.id === videoId);
+            if (!video || !video.firebaseKey) return;
+
+            try {
+                await fetch(`${FIREBASE_URL}/videos/${video.firebaseKey}.json`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title: newTitle, description: newDesc })
+                });
+                video.title = newTitle;
+                video.description = newDesc;
+                closeEditModal();
+                renderVideos(document.getElementById('searchInput').value);
+                showToast('تم تعديل المقطع بنجاح! ✅');
+            } catch(e) {
+                showToast('فشل التعديل! ⚠️');
+            }
         }
 
-        // Delete video handler
-        function deleteVideo(videoId, event) {
+        async function deleteVideo(videoId, event) {
             event.stopPropagation();
             if (!confirm('هل أنت متأكد من حذف هذا المقطع؟')) return;
-            videosData = videosData.filter(v => v.id !== videoId);
-            localStorage.setItem('thawab_videos', JSON.stringify(videosData));
-            renderVideos(document.getElementById('searchInput').value);
-            showToast('تم حذف المقطع بنجاح! 🗑');
+            const video = videosData.find(v => v.id === videoId);
+            if (!video || !video.firebaseKey) return;
+
+            try {
+                await fetch(`${FIREBASE_URL}/videos/${video.firebaseKey}.json`, { method: 'DELETE' });
+                videosData = videosData.filter(v => v.id !== videoId);
+                renderVideos(document.getElementById('searchInput').value);
+                showToast('تم حذف المقطع بنجاح! 🗑');
+            } catch(e) {
+                showToast('فشل الحذف! ⚠️');
+            }
         }
 
         // Settings Modal
@@ -1175,8 +1184,8 @@
         }
 
         // Initial setup and render check
-        window.addEventListener('DOMContentLoaded', () => {
-            initVideos();
+        window.addEventListener('DOMContentLoaded', async () => {
+            await initVideos();
             
             // Check for search query parameter
             const urlParams = new URLSearchParams(window.location.search);
@@ -1184,8 +1193,6 @@
             if (query) {
                 document.getElementById('searchInput').value = query;
                 renderVideos(query);
-            } else {
-                renderVideos();
             }
 
             // Set role permissions
