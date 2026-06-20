@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Thawab - تفاصيل المقطع</title>
+    <title>ThaWab - تفاصيل المقطع</title>
     <!-- Google Fonts for premium typography -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -457,9 +457,9 @@
             </div>
         </div>
 
-        <!-- Center: Website Name "Thawab" -->
+        <!-- Center: Website Name "ThaWab" -->
         <div class="header-center">
-            <div class="logo" onclick="goHome()">Thawab</div>
+            <div class="logo" onclick="goHome()">ThaWab</div>
         </div>
 
         <!-- Left side: Log Out button -->
@@ -472,7 +472,6 @@
 
     <!-- Main Detail Section -->
     <div class="detail-container">
-        <!-- Back to feed button -->
         <a href="home.html" class="back-btn">⬅ العودة إلى قائمة الفيديوهات</a>
 
         <!-- Main Video Card Box -->
@@ -501,6 +500,10 @@
             </div>
         </div>
     </div>
+
+    <footer style="text-align:center;padding:1.5rem;color:#4a5568;font-size:0.85rem;border-top:1px solid rgba(108,92,231,0.1);margin-top:1rem;">
+        Copyright © 2026 by ThaWab
+    </footer>
 
     <script>
         let videosData = [];
@@ -533,7 +536,7 @@
         function renderCurrentVideo() {
             if (!currentVideo) return;
             
-            document.title = `Thawab - ${currentVideo.title}`;
+            document.title = `ThaWab - ${currentVideo.title}`;
             document.getElementById('videoTitle').textContent = currentVideo.title;
             document.getElementById('videoDesc').textContent = currentVideo.description;
 
