@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Thawab - تفاصيل المقطع</title>
+    <!-- Google Fonts for premium typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%); 
+            min-height: 100vh; 
+            min-height: 100dvh; 
+            color: #e2e8f0;
+            overflow-y: scroll;
+            padding-top: 80px; /* space for fixed header */
+            position: relative;
+        }
+
+        /* Floating background icons */
+        .floating-icons { position: absolute; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: hidden; }
+        .icon { position: absolute; font-size: 2rem; opacity: 0.08; animation: float 6s ease-in-out infinite; color: #6c5ce7; }
+        .icon:nth-child(odd) { animation-direction: alternate; }
+        .icon:nth-child(1) { top: 15%; left: 8%; animation-delay: -1s; }
+        .icon:nth-child(2) { top: 45%; right: 12%; animation-delay: -3s; }
+        .icon:nth-child(3) { bottom: 25%; left: 10%; animation-delay: -5s; }
+        .icon:nth-child(4) { bottom: 15%; right: 8%; animation-delay: -2s; }
+        @keyframes float { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-20px) rotate(180deg); } }
+
+        /* Header Styling */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: rgba(30, 30, 60, 0.85);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(108, 92, 231, 0.25);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 30%;
+        }
+
+        .search-container {
+            position: relative;
+            width: 100%;
+            max-width: 250px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.6rem 2.5rem 0.6rem 1rem;
+            border: 2px solid #2d3748;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            background: #1a202c;
+            color: #e2e8f0;
+            transition: all 0.3s ease;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #6c5ce7;
+            background: #2d3748;
+            box-shadow: 0 0 10px rgba(108, 92, 231, 0.3);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #718096;
+            font-size: 1rem;
+            pointer-events: none;
+        }
+
+        .header-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 30%;
+        }
+
+        .logo {
+            font-family: 'Outfit', 'Cairo', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .header-left {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            width: 30%;
+        }
+
+        .logout-btn {
+            background: rgba(220, 53, 69, 0.1);
+            color: #ff7675;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Cairo', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(220, 53, 69, 0.85);
+            color: white;
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Detail container */
+        .detail-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Main Video Card Box */
+        .video-box {
+            background: rgba(30, 30, 60, 0.75);
+            border-radius: 24px;
+            border: 1px solid rgba(108, 92, 231, 0.25);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            margin-bottom: 2rem;
+        }
+
+        /* YouTube Embed Iframe Wrapper */
+        .video-iframe-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+        }
+
+        .video-iframe-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        /* Video Info Text (Yellow/Gold Accent Background in drawing) */
+        .video-info-section {
+            padding: 2rem;
+            background: rgba(253, 203, 110, 0.04);
+            border-top: 1px solid rgba(253, 203, 110, 0.08);
+        }
+
+        .video-info-title {
+            font-size: 1.5rem;
+            font-weight: 850;
+            color: #fff;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        .video-info-desc {
+            font-size: 1.05rem;
+            color: #cbd5e0;
+            line-height: 1.7;
+        }
+
+        /* Back to Feed button */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #a29bfe;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            transition: transform 0.2s, color 0.2s;
+        }
+
+        .back-btn:hover {
+            color: #6c5ce7;
+            transform: translateX(5px);
+        }
+
+        /* Similar Videos Section */
+        .similar-section {
+            background: rgba(30, 30, 60, 0.55);
+            border-radius: 24px;
+            border: 1px solid rgba(108, 92, 231, 0.15);
+            padding: 2rem;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .similar-section-title {
+            font-size: 1.3rem;
+            font-weight: 750;
+            color: #fff;
+            margin-bottom: 1.5rem;
+            border-right: 4px solid #6c5ce7;
+            padding-right: 10px;
+        }
+
+        .similar-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        /* Similar video row item */
+        .similar-item {
+            display: flex;
+            gap: 1rem;
+            background: rgba(45, 55, 72, 0.4);
+            border-radius: 16px;
+            padding: 0.8rem;
+            border: 1px solid rgba(108, 92, 231, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .similar-item:hover {
+            background: rgba(45, 55, 72, 0.8);
+            border-color: rgba(108, 92, 231, 0.35);
+            transform: translateX(-5px);
+        }
+
+        .similar-thumb-container {
+            width: 140px;
+            aspect-ratio: 16/9;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            flex-shrink: 0;
+            background: #000;
+        }
+
+        .similar-thumb {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .similar-play-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .similar-play-icon {
+            font-size: 1.2rem;
+            color: white;
+            background: rgba(108, 92, 231, 0.9);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-right: 1px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .similar-details {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .similar-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.4rem;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .similar-publisher {
+            font-size: 0.8rem;
+            color: #a0aec0;
+        }
+
+        .no-similar {
+            text-align: center;
+            color: #a0aec0;
+            padding: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        /* Error fallback */
+        .yt-fallback {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            background: #000;
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 10;
+        }
+
+        .yt-fallback p {
+            color: #a0aec0;
+            font-size: 1rem;
+        }
+
+        .yt-open-btn {
+            background: #ff0000;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.8rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .yt-open-btn:hover {
+            background: #cc0000;
+            transform: scale(1.05);
+        }
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            header {
+                padding: 0 1rem;
+            }
+            .header-right {
+                width: 40%;
+            }
+            .header-left {
+                width: 25%;
+            }
+            .logo {
+                font-size: 1.8rem;
+            }
+            .logout-btn {
+                padding: 0.5rem 0.8rem;
+                font-size: 0.8rem;
+            }
+            .similar-item {
+                gap: 0.8rem;
+            }
+            .similar-thumb-container {
+                width: 110px;
+            }
+            .video-info-title {
+                font-size: 1.25rem;
+            }
+            .video-info-desc {
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                height: 60px;
+            }
+            body {
+                padding-top: 70px;
+            }
+            .logo {
+                font-size: 1.4rem;
+            }
+            .search-container {
+                max-width: 120px;
+            }
+            .search-input {
+                padding: 0.4rem 1.8rem 0.4rem 0.6rem;
+                font-size: 0.75rem;
+            }
+            .search-icon {
+                right: 8px;
+                font-size: 0.8rem;
+            }
+            .logout-btn span {
+                display: none;
+            }
+            .similar-item {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            .similar-thumb-container {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-icons">
+        <div class="icon">✨</div>
+        <div class="icon">💫</div>
+        <div class="icon">🌟</div>
+        <div class="icon">🕌</div>
+    </div>
+
+    <!-- Header bar -->
+    <header>
+        <!-- Right side: Search input (redirects search keyword back to home.html) -->
+        <div class="header-right">
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" id="searchInput" placeholder="بحث عن مقاطع..." onkeyup="handleSearch(event)">
+            </div>
+        </div>
+
+        <!-- Center: Website Name "Thawab" -->
+        <div class="header-center">
+            <div class="logo" onclick="goHome()">Thawab</div>
+        </div>
+
+        <!-- Left side: Log Out button -->
+        <div class="header-left">
+            <button class="logout-btn" onclick="handleLogout()">
+                <span>🚪</span> تسجيل الخروج
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Detail Section -->
+    <div class="detail-container">
+        <!-- Back to feed button -->
+        <a href="home.html" class="back-btn">⬅ العودة إلى قائمة الفيديوهات</a>
+
+        <!-- Main Video Card Box -->
+        <div class="video-box">
+            <!-- Iframe youtube player -->
+            <div class="video-iframe-container">
+                <iframe id="videoPlayer" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                <div class="yt-fallback" id="ytFallback">
+                    <p>⚠️ هذا الفيديو لا يدعم التشغيل المضمّن</p>
+                    <button class="yt-open-btn" id="ytOpenBtn">▶ فتح على YouTube</button>
+                </div>
+            </div>
+
+            <!-- Title & Description (Gold accent area) -->
+            <div class="video-info-section">
+                <h1 class="video-info-title" id="videoTitle">جاري تحميل العنوان...</h1>
+                <p class="video-info-desc" id="videoDesc">جاري تحميل تفاصيل المقطع والوصف...</p>
+            </div>
+        </div>
+
+        <!-- Similar Videos Section -->
+        <div class="similar-section">
+            <h3 class="similar-section-title">فيديوهات مشابهة</h3>
+            <div class="similar-list" id="similarList">
+                <!-- Rendered dynamically via algorithm -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let videosData = [];
+        let currentVideo = null;
+
+        // Fetch query id from url
+        const urlParams = new URLSearchParams(window.location.search);
+        const videoId = urlParams.get('id');
+
+        // Load videos from localStorage
+        function loadVideos() {
+            const stored = localStorage.getItem('thawab_videos');
+            if (stored) {
+                try {
+                    videosData = JSON.parse(stored);
+                } catch(e) {
+                    videosData = [];
+                }
+            }
+            
+            // Find current video
+            currentVideo = videosData.find(v => v.id === videoId);
+            if (!currentVideo) {
+                // If not found, fallback alert and redirect
+                showToast('عذراً، المقطع غير موجود! ⚠️');
+                setTimeout(() => {
+                    window.location.href = 'home.html';
+                }, 1500);
+            }
+        }
+
+        // Render current video details
+        function renderCurrentVideo() {
+            if (!currentVideo) return;
+            
+            document.title = `Thawab - ${currentVideo.title}`;
+            document.getElementById('videoTitle').textContent = currentVideo.title;
+            document.getElementById('videoDesc').textContent = currentVideo.description;
+
+            const container = document.querySelector('.video-iframe-container');
+
+            if (currentVideo.type === 'audio') {
+                container.innerHTML = `
+                    <div style="display:flex;flex-direction:column;justify-content:center;align-items:center;gap:1.5rem;padding:2rem;background:#1a1a2e;width:100%;height:100%;min-height:200px;">
+                        <span style="font-size:5rem;">🎵</span>
+                        <audio controls autoplay style="width:90%;max-width:500px;" src="${currentVideo.url}">
+                            المتصفح لا يدعم تشغيل الصوت.
+                        </audio>
+                    </div>`;
+            } else if (currentVideo.type === 'video') {
+                container.innerHTML = `
+                    <video controls autoplay style="position:absolute;top:0;left:0;width:100%;height:100%;background:#000;" src="${currentVideo.url}">
+                        المتصفح لا يدعم تشغيل الفيديو.
+                    </video>`;
+            } else {
+                // YouTube
+                const iframe = document.getElementById('videoPlayer');
+                if (iframe) {
+                    iframe.src = `https://www.youtube.com/embed/${currentVideo.id}?autoplay=1`;
+                    iframe.addEventListener('error', showFallback);
+                    window.addEventListener('message', function(e) {
+                        if (e.data && typeof e.data === 'string') {
+                            try {
+                                const msg = JSON.parse(e.data);
+                                if (msg.event === 'onError' && (msg.info === 150 || msg.info === 101 || msg.info === 5)) {
+                                    showFallback();
+                                }
+                            } catch(err) {}
+                        }
+                    });
+                    document.getElementById('ytOpenBtn').onclick = function() {
+                        window.open(`https://www.youtube.com/watch?v=${currentVideo.id}`, '_blank');
+                    };
+                }
+            }
+        }
+
+        // Similar Videos title matching word algorithm
+        function renderSimilarVideos() {
+            if (!currentVideo) return;
+            
+            const similarList = document.getElementById('similarList');
+            similarList.innerHTML = '';
+
+            // Split current title into words and filter out common Arabic words / non-words, keeping words with length >= 3
+            // These include words like: "سورة", "بصوت", "الشيخ", "كاملة" etc. But we filter out length < 3
+            const currentWords = currentVideo.title
+                .split(/\s+/)
+                .map(w => w.replace(/[^\w\u0621-\u064A]/g, '').trim())
+                .filter(w => w.length >= 3);
+
+            // Exclude current video and rank others by matching word count
+            const similarityRank = videosData
+                .filter(v => v.id !== currentVideo.id)
+                .map(v => {
+                    const vWords = v.title
+                        .split(/\s+/)
+                        .map(w => w.replace(/[^\w\u0621-\u064A]/g, '').trim())
+                        .filter(w => w.length >= 3);
+                    
+                    let matchCount = 0;
+                    currentWords.forEach(cw => {
+                        if (vWords.some(vw => vw.toLowerCase() === cw.toLowerCase() || vw.toLowerCase().includes(cw.toLowerCase()) || cw.toLowerCase().includes(vw.toLowerCase()))) {
+                            matchCount++;
+                        }
+                    });
+                    
+                    return { video: v, matchCount };
+                })
+                .filter(item => item.matchCount > 0) // At least one shared word!
+                .sort((a, b) => b.matchCount - a.matchCount); // Sort by highest matching words
+
+            if (similarityRank.length === 0) {
+                similarList.innerHTML = `<div class="no-similar">لا توجد مقاطع مشابهة حالياً.</div>`;
+                return;
+            }
+
+            // Display matching videos
+            similarityRank.forEach(item => {
+                const video = item.video;
+                const div = document.createElement('div');
+                div.className = 'similar-item';
+                div.onclick = () => {
+                    window.location.href = `video.html?id=${video.id}`;
+                };
+                div.innerHTML = `
+                    <div class="similar-thumb-container">
+                        <img class="similar-thumb" src="https://img.youtube.com/vi/${video.id}/hqdefault.jpg" alt="${video.title}">
+                        <div class="similar-play-overlay">
+                            <span class="similar-play-icon">▶</span>
+                        </div>
+                    </div>
+                    <div class="similar-details">
+                        <h4 class="similar-title">${video.title}</h4>
+                        <span class="similar-publisher">${video.publisher}</span>
+                    </div>
+                `;
+                similarList.appendChild(div);
+            });
+        }
+
+        function showFallback() {
+            document.getElementById('ytFallback').style.display = 'flex';
+        }
+
+        // Search redirection back to home
+        function handleSearch(event) {
+            if (event.key === 'Enter') {
+                const query = event.target.value.trim();
+                if (query) {
+                    window.location.href = `home.html?q=${encodeURIComponent(query)}`;
+                }
+            }
+        }
+
+        function goHome() {
+            window.location.href = 'home.html';
+        }
+
+        // Logout logic
+        function handleLogout() {
+            showToast('تم تسجيل الخروج بنجاح! جاري التوجيه...');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        }
+
+        // Custom premium Toast Notification
+        function showToast(message) {
+            const oldToast = document.querySelector('.custom-toast');
+            if (oldToast) oldToast.remove();
+
+            const toast = document.createElement('div');
+            toast.className = 'custom-toast';
+            toast.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(30, 30, 60, 0.95);border:1px solid #6c5ce7;padding:12px 24px;border-radius:15px;color:white;font-weight:bold;z-index:99999;box-shadow:0 10px 30px rgba(0, 0, 0, 0.5);animation:fadeInUp 0.3s ease-out;backdrop-filter:blur(5px);';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            const style = document.createElement('style');
+            style.className = 'toast-style';
+            style.textContent = '@keyframes fadeInUp{from{transform:translate(-50%, 50px);opacity:0}to{transform:translate(-50%, 0);opacity:1}}';
+            document.head.appendChild(style);
+
+            setTimeout(() => {
+                toast.style.animation = 'fadeOutDown 0.3s ease-in forwards';
+                const style2 = document.createElement('style');
+                style2.textContent = '@keyframes fadeOutDown{from{transform:translate(-50%, 0);opacity:1}to{transform:translate(-50%, 50px);opacity:0}}';
+                document.head.appendChild(style2);
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 2500);
+        }
+
+        // Initial setup and render check
+        window.addEventListener('DOMContentLoaded', () => {
+            loadVideos();
+            renderCurrentVideo();
+            renderSimilarVideos();
+        });
+    </script>
+</body>
+</html>

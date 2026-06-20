@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Thawab - تسجيل الدخول</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Arial', sans-serif; background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%); min-height: 100vh; min-height: 100dvh; display: flex; justify-content: center; align-items: center; position: relative; overflow: hidden; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+        .floating-icons { position: absolute; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+        .icon { position: absolute; font-size: 2rem; opacity: 0.2; animation: float 6s ease-in-out infinite; color: #6c5ce7; }
+        .icon:nth-child(odd) { animation-direction: alternate; }
+        .icon:nth-child(1) { top: 10%; left: 10%; animation-delay: -1s; }
+        .icon:nth-child(2) { top: 20%; right: 15%; animation-delay: -2s; }
+        .icon:nth-child(3) { top: 60%; left: 8%; animation-delay: -3s; }
+        .icon:nth-child(4) { bottom: 20%; right: 10%; animation-delay: -4s; }
+        .icon:nth-child(5) { bottom: 10%; left: 20%; animation-delay: -5s; }
+        .icon:nth-child(6) { top: 40%; right: 8%; animation-delay: -6s; }
+        .icon:nth-child(7) { top: 70%; left: 70%; animation-delay: -1.5s; }
+        .icon:nth-child(8) { top: 15%; left: 60%; animation-delay: -2.5s; }
+        @keyframes float { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-20px) rotate(180deg); } }
+        .login-container { background: rgba(30, 30, 60, 0.95); padding: 3rem 2.5rem; border-radius: 20px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); width: 100%; max-width: 400px; text-align: center; position: relative; z-index: 10; backdrop-filter: blur(10px); border: 1px solid rgba(108, 92, 231, 0.3); }
+        .logo { font-size: 3rem; font-weight: bold; background: linear-gradient(45deg, #6c5ce7, #a29bfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.5rem; }
+        .subtitle { color: #b2bec3; margin-bottom: 2rem; font-size: 1rem; }
+        .input-group { margin-bottom: 1.5rem; text-align: right; }
+        label { display: block; margin-bottom: 0.5rem; color: #ddd; font-weight: 500; }
+        input[type="text"], input[type="password"] { width: 100%; padding: 1rem 1rem 1rem 3.5rem; border: 2px solid #2d3748; border-radius: 10px; font-size: 1rem; transition: all 0.3s ease; background: #1a202c; color: #e2e8f0; direction: rtl; text-align: right; -webkit-appearance: none; appearance: none; touch-action: manipulation; }
+        select { width: 100%; padding: 1rem 1rem 1rem 3.5rem; border: 2px solid #2d3748; border-radius: 10px; font-size: 1rem; transition: all 0.3s ease; background: #1a202c; color: #e2e8f0; direction: rtl; text-align: right; -webkit-appearance: none; appearance: none; touch-action: manipulation; }
+        input[type="text"]::placeholder, input[type="password"]::placeholder { color: #718096; text-align: right; direction: rtl; padding-right: 0.5rem; }
+        input[type="text"]:focus, input[type="password"]:focus, select:focus { outline: none; border-color: #6c5ce7; background: #2d3748; box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3); }
+        .forgot-password { text-align: center; margin-bottom: 1.5rem; }
+        .forgot-password a { color: #6c5ce7; text-decoration: none; font-size: 0.9rem; }
+        .forgot-password a:hover { text-decoration: underline; color: #a29bfe; }
+        .login-button { width: 100%; padding: 1rem; background: linear-gradient(45deg, #6c5ce7, #a29bfe); color: white; border: none; border-radius: 10px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: all 0.3s ease; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; touch-action: manipulation; }
+        .login-button:hover { box-shadow: 0 10px 25px rgba(108, 92, 231, 0.4); background: linear-gradient(45deg, #5b4bd1, #9188f7); }
+        .divider { margin: 2rem 0; position: relative; text-align: center; color: #718096; }
+        .divider::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: #2d3748; }
+        .divider span { background: rgba(30, 30, 60, 0.95); padding: 0 1rem; }
+        .signup-link { color: #b2bec3; font-size: 0.9rem; }
+        .signup-link a { color: #6c5ce7; text-decoration: none; font-weight: bold; }
+        .signup-link a:hover { color: #a29bfe; text-decoration: underline; }
+        .form-icon { position: absolute; left: 1.2rem; top: 50%; transform: translateY(-50%); color: #718096; font-size: 1.2rem; pointer-events: none; }
+        .input-with-icon { position: relative; }
+        .input-with-icon input { padding: 1rem 1rem 1rem 3.5rem; }
+        .login-container::before { display: none; }
+        @media (max-width: 480px) { .login-container { margin: 1rem; padding: 2rem 1.5rem; max-width: 350px; } .logo { font-size: 2.5rem; } }
+    </style>
+</head>
+<body>
+    <div class="floating-icons">
+        <div class="icon">📧</div><div class="icon">🔒</div><div class="icon">👤</div><div class="icon">🌟</div>
+        <div class="icon">💫</div><div class="icon">🎯</div><div class="icon">📱</div><div class="icon">🚀</div>
+    </div>
+
+    <div class="login-container">
+        <h1 class="logo">Thawab</h1>
+        <p class="subtitle">مرحباً بك مرة أخرى</p>
+
+        <form class="login-form" onsubmit="handleLogin(event)">
+            <div class="input-group">
+                <label for="username">اسمك</label>
+                <div class="input-with-icon">
+                    <input type="text" id="username" name="username" required placeholder="أدخل اسمك">
+                    <span class="form-icon">👤</span>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="password">كلمة المرور</label>
+                <div class="input-with-icon">
+                    <input type="password" id="password" name="password" required placeholder="أدخل كلمة المرور">
+                    <span class="form-icon">🔒</span>
+                </div>
+            </div>
+            <div class="forgot-password">
+                <a href="#" onclick="showMessage('سيتم إرسال رابط استعادة كلمة المرور قريباً!')">هل نسيت كلمة المرور؟</a>
+            </div>
+            <button type="submit" class="login-button">تسجيل الدخول</button>
+        </form>
+
+        <div class="divider"><span>أو</span></div>
+        <div class="signup-link">
+            ليس لديك حساب؟ <a href="register.html">إنشاء حساب جديد</a>
+        </div>
+    </div>
+
+    <script>
+        function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            if (username && password) loginUser(username, password);
+        }
+
+        async function loginUser(username, password) {
+            const loginButton = document.querySelector('.login-button');
+            const originalText = loginButton.textContent;
+            loginButton.textContent = 'جارٍ تسجيل الدخول...';
+            loginButton.disabled = true;
+
+            try {
+                // جلب بيانات الأعضاء من Firebase
+                const response = await fetch('https://habbo-login-default-rtdb.firebaseio.com/members.json');
+                const data = await response.json();
+
+                let userFound = false;
+                let userRole = 'member';
+
+                // الأدمن الثابت دايماً
+                const adminUsers = ['lil'];
+
+                if (data) {
+                    for (const key in data) {
+                        const user = data[key];
+                        if (user.character && user.character.toLowerCase() === username.toLowerCase()) {
+                            userFound = true;
+                            // التحقق من كلمة المرور
+                            if (user.password !== password) {
+                                showMessage('كلمة المرور غير صحيحة!', 'error');
+                                loginButton.textContent = originalText;
+                                loginButton.disabled = false;
+                                return;
+                            }
+                            // لو الاسم في قائمة الأدمن يبقى admin، غير كده يجيب الـ role من Firebase
+                            if (adminUsers.includes(username.toLowerCase())) {
+                                userRole = 'admin';
+                            } else {
+                                userRole = (user.role || 'member').toLowerCase();
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                if (!userFound) {
+                    showMessage('هذا المستخدم غير موجود!', 'error');
+                    loginButton.textContent = originalText;
+                    loginButton.disabled = false;
+                    return;
+                }
+
+                // حفظ الـ role في localStorage
+                localStorage.setItem('userRole', userRole);
+                localStorage.setItem('username', username);
+
+                showMessage('تم تسجيل الدخول بنجاح!', 'success');
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                setTimeout(() => { window.location.href = 'home.html'; }, 1500);
+
+            } catch (error) {
+                showMessage('حدث خطأ في الاتصال، حاول مرة أخرى!', 'error');
+            } finally {
+                loginButton.textContent = originalText;
+                loginButton.disabled = false;
+            }
+        }
+
+        function showMessage(message, type = 'info') {
+            const messageDiv = document.createElement('div');
+            messageDiv.style.cssText = 'position:fixed;top:20px;right:20px;padding:15px 20px;border-radius:10px;color:white;font-weight:bold;z-index:10000;max-width:300px;word-wrap:break-word;animation:slideIn 0.3s ease-out;';
+            if (type === 'success') messageDiv.style.background = 'linear-gradient(45deg, #28a745, #20c997)';
+            else if (type === 'error') messageDiv.style.background = 'linear-gradient(45deg, #dc3545, #fd7e14)';
+            else messageDiv.style.background = 'linear-gradient(45deg, #6c5ce7, #a29bfe)';
+            messageDiv.textContent = message;
+            document.body.appendChild(messageDiv);
+            setTimeout(() => { messageDiv.remove(); }, 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const style = document.createElement('style');
+            style.textContent = '@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}';
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html>
