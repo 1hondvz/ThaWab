@@ -146,6 +146,87 @@
             transform: translateY(-2px);
         }
 
+        .settings-btn {
+            background: rgba(108, 92, 231, 0.1);
+            color: #a29bfe;
+            border: 1px solid rgba(108, 92, 231, 0.3);
+            padding: 0.6rem 0.9rem;
+            border-radius: 20px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            font-family: 'Cairo', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .settings-btn:hover {
+            background: rgba(108, 92, 231, 0.3);
+            transform: rotate(60deg);
+        }
+
+        /* Settings Modal */
+        .settings-modal .modal-content {
+            max-width: 420px;
+        }
+
+        .settings-section {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(108,92,231,0.15);
+            border-radius: 14px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .settings-section-title {
+            color: #a29bfe;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .user-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .user-badge.admin {
+            background: rgba(46,204,113,0.15);
+            color: #2ecc71;
+            border: 1px solid rgba(46,204,113,0.3);
+        }
+
+        .user-badge.member {
+            background: rgba(108,92,231,0.15);
+            color: #a29bfe;
+            border: 1px solid rgba(108,92,231,0.3);
+        }
+
+        .danger-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(220,53,69,0.1);
+            color: #ff7675;
+            border: 1px solid rgba(220,53,69,0.3);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            transition: all 0.3s;
+            margin-top: 0.5rem;
+        }
+
+        .danger-btn:hover {
+            background: rgba(220,53,69,0.85);
+            color: white;
+        }
+
         .admin-btn {
             background: rgba(46, 204, 113, 0.15);
             color: #2ecc71;
@@ -586,6 +667,9 @@
             <button class="admin-btn" id="adminBtn" onclick="openAddVideoModal()">
                 <span>➕</span> إضافة مقطع
             </button>
+            <button class="settings-btn" onclick="openSettingsModal()">
+                <span>⚙️</span>
+            </button>
             <button class="logout-btn" onclick="handleLogout()">
                 <span>🚪</span> تسجيل الخروج
             </button>
@@ -595,6 +679,56 @@
     <!-- Main video feed list -->
     <div class="feed-container" id="videoFeed">
         <!-- Rendered dynamically by javascript -->
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay settings-modal" id="settingsModal">
+        <div class="modal-content">
+            <h3 class="modal-title">⚙️ الإعدادات</h3>
+
+            <!-- معلومات الحساب -->
+            <div class="settings-section">
+                <div class="settings-section-title">الحساب</div>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div>
+                        <div style="color:#fff;font-weight:700;font-size:1rem;" id="settingsUsername">-</div>
+                        <div style="color:#718096;font-size:0.8rem;margin-top:0.2rem;">اسم المستخدم الحالي</div>
+                    </div>
+                    <span class="user-badge" id="settingsRoleBadge">member</span>
+                </div>
+            </div>
+
+            <!-- تغيير الاسم -->
+            <div class="settings-section">
+                <div class="settings-section-title">✏️ تغيير الاسم</div>
+                <div class="form-group" style="margin-bottom:0.8rem;">
+                    <input type="text" id="newUsername" placeholder="الاسم الجديد">
+                </div>
+                <button class="modal-btn save" style="width:100%;padding:0.7rem;" onclick="changeUsername()">تغيير الاسم</button>
+            </div>
+
+            <!-- تغيير كلمة المرور -->
+            <div class="settings-section">
+                <div class="settings-section-title">🔒 تغيير كلمة المرور</div>
+                <div class="form-group" style="margin-bottom:0.8rem;">
+                    <input type="password" id="currentPassword" placeholder="كلمة المرور الحالية">
+                </div>
+                <div class="form-group" style="margin-bottom:0.8rem;">
+                    <input type="password" id="newPassword" placeholder="كلمة المرور الجديدة">
+                </div>
+                <button class="modal-btn save" style="width:100%;padding:0.7rem;" onclick="changePassword()">تغيير كلمة المرور</button>
+            </div>
+
+            <!-- خطر -->
+            <div class="settings-section">
+                <div class="settings-section-title" style="color:#ff7675;">⚠️ منطقة الخطر</div>
+                <button class="danger-btn" onclick="deleteAccount()">🗑 حذف الحساب نهائياً</button>
+            </div>
+
+            <div class="modal-buttons" style="margin-top:0.5rem;">
+                <button class="modal-btn cancel" onclick="closeSettingsModal()">إغلاق</button>
+            </div>
+        </div>
     </div>
 
     <!-- Edit Video Modal (Admin Only) -->
@@ -862,6 +996,122 @@
             localStorage.setItem('thawab_videos', JSON.stringify(videosData));
             renderVideos(document.getElementById('searchInput').value);
             showToast('تم حذف المقطع بنجاح! 🗑');
+        }
+
+        // Settings Modal
+        function openSettingsModal() {
+            const username = localStorage.getItem('username') || '-';
+            const role = localStorage.getItem('userRole') || 'member';
+            document.getElementById('settingsUsername').textContent = username;
+            const badge = document.getElementById('settingsRoleBadge');
+            badge.textContent = role === 'admin' ? '👑 أدمن' : '👤 عضو';
+            badge.className = 'user-badge ' + (role === 'admin' ? 'admin' : 'member');
+            document.getElementById('settingsModal').classList.add('active');
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').classList.remove('active');
+            document.getElementById('newUsername').value = '';
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+        }
+
+        async function changeUsername() {
+            const newName = document.getElementById('newUsername').value.trim();
+            if (!newName) { showToast('أدخل الاسم الجديد! ⚠️'); return; }
+            const currentName = localStorage.getItem('username');
+
+            try {
+                // جلب البيانات ودور على الاسم الحالي
+                const res = await fetch('https://habbo-login-default-rtdb.firebaseio.com/members.json');
+                const data = await res.json();
+                let userKey = null;
+                for (const key in data) {
+                    if (data[key].character && data[key].character.toLowerCase() === currentName.toLowerCase()) {
+                        userKey = key;
+                        break;
+                    }
+                }
+                if (!userKey) { showToast('لم يتم العثور على الحساب! ⚠️'); return; }
+
+                // تحديث الاسم
+                await fetch(`https://habbo-login-default-rtdb.firebaseio.com/members/${userKey}/character.json`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newName)
+                });
+
+                localStorage.setItem('username', newName);
+                document.getElementById('settingsUsername').textContent = newName;
+                document.getElementById('newUsername').value = '';
+                showToast('تم تغيير الاسم بنجاح! ✅');
+            } catch(e) {
+                showToast('حدث خطأ! ⚠️');
+            }
+        }
+
+        async function changePassword() {
+            const currentPass = document.getElementById('currentPassword').value;
+            const newPass = document.getElementById('newPassword').value.trim();
+            if (!currentPass || !newPass) { showToast('أدخل كلمة المرور الحالية والجديدة! ⚠️'); return; }
+            if (newPass.length < 3) { showToast('كلمة المرور قصيرة جداً! ⚠️'); return; }
+            const currentName = localStorage.getItem('username');
+
+            try {
+                const res = await fetch('https://habbo-login-default-rtdb.firebaseio.com/members.json');
+                const data = await res.json();
+                let userKey = null;
+                let userPass = null;
+                for (const key in data) {
+                    if (data[key].character && data[key].character.toLowerCase() === currentName.toLowerCase()) {
+                        userKey = key;
+                        userPass = data[key].password;
+                        break;
+                    }
+                }
+                if (!userKey) { showToast('لم يتم العثور على الحساب! ⚠️'); return; }
+                if (userPass !== currentPass) { showToast('كلمة المرور الحالية غير صحيحة! ⚠️'); return; }
+
+                await fetch(`https://habbo-login-default-rtdb.firebaseio.com/members/${userKey}/password.json`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newPass)
+                });
+
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                showToast('تم تغيير كلمة المرور بنجاح! ✅');
+            } catch(e) {
+                showToast('حدث خطأ! ⚠️');
+            }
+        }
+
+        async function deleteAccount() {
+            if (!confirm('هل أنت متأكد من حذف حسابك نهائياً؟ لا يمكن التراجع عن هذا الإجراء!')) return;
+            const currentName = localStorage.getItem('username');
+
+            try {
+                const res = await fetch('https://habbo-login-default-rtdb.firebaseio.com/members.json');
+                const data = await res.json();
+                let userKey = null;
+                for (const key in data) {
+                    if (data[key].character && data[key].character.toLowerCase() === currentName.toLowerCase()) {
+                        userKey = key;
+                        break;
+                    }
+                }
+                if (!userKey) { showToast('لم يتم العثور على الحساب! ⚠️'); return; }
+
+                await fetch(`https://habbo-login-default-rtdb.firebaseio.com/members/${userKey}.json`, {
+                    method: 'DELETE'
+                });
+
+                showToast('تم حذف الحساب. جاري التوجيه...');
+                localStorage.clear();
+                setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+            } catch(e) {
+                showToast('حدث خطأ! ⚠️');
+            }
         }
 
         // Logout logic
